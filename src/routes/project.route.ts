@@ -4,6 +4,6 @@ import { getProjects } from '../handlers';
 
 const router = Router();
 
-router.get('/projects', ensureAuthenticated, getProjects);
+router.get('/', getProjects);
 
 export default router;

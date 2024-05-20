@@ -18,7 +18,6 @@ export const getProjects = async (
       message: 'success',
     });
   } catch (err) {
-    console.log('error', err);
     res.status(500);
   }
 };

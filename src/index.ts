@@ -6,6 +6,7 @@ import passport from 'passport';
 import './utils/connect-db';
 import routes from './routes';
 import './strategies/local.strategy';
+import { errorHandler } from './middlewares';
 
 dotenv.config();
 
@@ -20,5 +21,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/api/v1', routes);
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Running express server on PORT ${PORT}`));

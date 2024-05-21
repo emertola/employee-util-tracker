@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { BaseResponse, IProject } from '../types';
 import {
   ValidationError,
@@ -6,6 +6,19 @@ import {
   validationResult,
 } from 'express-validator';
 import { ProjectSchema } from '../mongoose/schemas';
+import { CustomError } from '../utils/custom-error';
+import { isValidObjectId } from '../utils';
+
+const validationCheck = (req: Request, res: Response, message?: string) => {
+  const result = validationResult(req);
+
+  if (!result.isEmpty()) {
+    return res.status(400).send({
+      data: result.array(),
+      message: message || 'Error encountered. Please try again!',
+    });
+  }
+};
 
 export const getProjects = async (
   req: Request,
@@ -24,14 +37,7 @@ export const getProjects = async (
 };
 
 export const createProject = async (req: Request, res: Response) => {
-  const result = validationResult(req);
-
-  if (!result.isEmpty()) {
-    return res.status(400).send({
-      data: result.array(),
-      message: 'Error creating the project!',
-    });
-  }
+  validationCheck(req, res, 'Error creating the project!');
 
   try {
     const { projectName, company } = req.body;
@@ -52,8 +58,8 @@ export const createProject = async (req: Request, res: Response) => {
       projectName,
       company,
     };
-    const newProject = new ProjectSchema(data);
-    const savedProject = await newProject.save();
+    const project = new ProjectSchema(data);
+    const savedProject = await project.save();
 
     return res.status(200).send({
       data: savedProject.toObject(),
@@ -61,5 +67,40 @@ export const createProject = async (req: Request, res: Response) => {
     });
   } catch (error) {
     return res.status(400);
+  }
+};
+
+export const updateProject = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  validationCheck(req, res, 'Error updating the project!');
+  const { id } = req.params;
+
+  try {
+    if (!isValidObjectId(id)) {
+      throw new CustomError('Invalid project ID', 400);
+    }
+
+    const { projectName, company } = req.body;
+    const project = { projectName, company };
+    const updateOptions = { new: true, runValidators: true };
+    const updatedProject = await ProjectSchema.findByIdAndUpdate(
+      id,
+      project,
+      updateOptions
+    );
+
+    if (!updatedProject) {
+      throw new CustomError('Project does not exists.', 400);
+    }
+
+    return res.status(200).send({
+      data: updatedProject.toObject(),
+      message: 'Project successfully updated!',
+    });
+  } catch (error) {
+    next(error);
   }
 };

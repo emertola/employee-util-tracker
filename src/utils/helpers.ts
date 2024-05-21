@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
 
 const saltRounds = 10;
 
@@ -9,3 +10,7 @@ export const hashPassword = (password: string) => {
 
 export const comparePassword = (plain: string, hashed: string) =>
   bcrypt.compareSync(plain, hashed);
+
+export const isValidObjectId = (id: string): boolean => {
+  return mongoose.Types.ObjectId.isValid(id);
+};

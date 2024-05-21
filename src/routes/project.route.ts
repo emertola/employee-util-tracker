@@ -1,10 +1,12 @@
-import { Request, Response, Router } from 'express';
-import { ensureAuthenticated } from '../middlewares';
-import { createProject, getProjects } from '../handlers';
+import { Router } from 'express';
+import { createProject, getProjects, updateProject } from '../handlers';
+import { checkSchema } from 'express-validator';
+import { projectSchema } from '../utils/validations';
 
 const router = Router();
 
 router.get('/', getProjects);
-router.post('/create', createProject);
+router.post('/create', checkSchema(projectSchema), createProject);
+router.put('/update/:id', checkSchema(projectSchema), updateProject);
 
 export default router;

@@ -104,3 +104,29 @@ export const updateProject = async (
     next(error);
   }
 };
+
+export const deleteProject = async (
+  req: Request,
+  res: Response<BaseResponse<IProject | ValidationError | string>>,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+
+  try {
+    if (!isValidObjectId(id)) {
+      throw new CustomError('Invalid project ID', 400);
+    }
+
+    const project = await ProjectSchema.findByIdAndDelete(id);
+    if (!project) {
+      throw new CustomError('Project not found.', 404);
+    }
+
+    res.send({
+      data: id,
+      message: 'Project successfully deleted!',
+    });
+  } catch (error) {
+    next(error);
+  }
+};

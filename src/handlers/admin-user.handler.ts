@@ -25,6 +25,23 @@ export const createAdminUser = async (
     includeOptionals: true,
   });
   data.password = hashPassword(data.password);
+  data.active = true;
+
+  if (!data.firstName) {
+    data.firstName = '';
+  }
+  if (!data.middleName) {
+    data.middleName = '';
+  }
+  if (!data.lastName) {
+    data.lastName = '';
+  }
+  if (!data.utilizations) {
+    data.utilizations = [];
+  }
+  if (!data.roles) {
+    data.roles = [];
+  }
 
   const newUser = new UserSchema(data);
 

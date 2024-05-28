@@ -1,6 +1,8 @@
 export interface UserInterface {
   id: string | number;
-  name: string;
-  displayName: string;
+  username: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
   comparePassword(password: string): Promise<boolean>;
 }

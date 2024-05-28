@@ -1,16 +1,26 @@
 import { Schema } from 'express-validator';
 
 export const createAdminUserSchema: Schema = {
-  displayName: {
+  firstName: {
     isLength: {
       options: {
         min: 3,
       },
-      errorMessage: 'Display Name field must be at least 3 characters',
+      errorMessage: 'First Name field must be at least 3 characters',
     },
-    notEmpty: {
-      errorMessage: 'Display Name field must not be empty.',
+    optional: true,
+  },
+  middleName: {
+    optional: true,
+  },
+  lastName: {
+    isLength: {
+      options: {
+        min: 3,
+      },
+      errorMessage: 'Last Name field must be at least 3 characters',
     },
+    optional: true,
   },
   username: {
     isLength: {
@@ -42,5 +52,16 @@ export const createAdminUserSchema: Schema = {
     isArray: {
       errorMessage: 'Roles must be an array.',
     },
+    optional: true,
+  },
+  utilizations: {
+    isArray: {
+      errorMessage: 'Utilizations must be an array.',
+    },
+    optional: true,
+  },
+  active: {
+    isBoolean: true,
+    optional: true,
   },
 };
